@@ -63,6 +63,28 @@
       box-shadow: 0 0 10px #ff4444;
     }
 
+    #replayButton {
+  display: none;             /* start hidden */
+  margin: 20px auto 0;       /* top margin, centered horizontally */
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border: 2px solid darkred;
+  background-color: transparent;
+  color: darkred;
+  border-radius: 8px;
+  max-width: 200px;
+  text-align: center;
+  white-space: nowrap;
+  transition: background-color 0.3s ease;
+}
+
+#replayButton:hover {
+  background-color: darkred;
+  color: white;
+}
+
+
     #musicButton:hover {
       background-color: #ff1a4b;
     }
@@ -259,9 +281,6 @@ function showLetterSequence(index = 0) {
     }, 1000); // fade-out duration
   }, 4500); // show each line for 4.5 seconds
 }
-
-// Start sequence initially
-// showLetterSequence();
 
 // Replay button restarts it
 replayButton.addEventListener("click", () => {
