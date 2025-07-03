@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>For My Love</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom, #000000, #220000);
+      height: 100vh;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-family: 'Courier New', monospace;
+      color: #dd4444;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 3em;
+      color: #dd4444;
+    }
+
+    p {
+      color: #aaa;
+      font-size: 1.2em;
+    }
+
+    #countdown {
+      font-size: 2em;
+      margin-top: 20px;
+      color: #ff5555;
+    }
+
+    .heart {
+      font-size: 5em;
+      animation: pulse 1.5s infinite;
+      color: #ff4444;
+      text-shadow: 0 0 15px #ff4444;
+    }
+
+    #finalMessage {
+      display: none;
+      padding-bottom: 20px;
+      font-size: 2em;
+      margin-top: 30px;
+      color: #ff1a4b;
+      text-shadow: 0 0 10px #ff1a4b;
+    }
+
+    #musicButton {
+      width: 150px;
+      height: 58px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 30px;
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #ff4444;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff4444;
+    }
+
+    #musicButton:hover {
+      background-color: #ff1a4b;
+    }
+
+    .exploding-heart {
+      position: absolute;
+      color: #ff3333;
+      font-size: 2em;
+      animation: explode 2s forwards;
+      opacity: 0;
+      text-shadow: 0 0 8px #ff4444;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes explode {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--x), var(--y)) scale(2);
+        opacity: 0;
+      }
+    }
+
+    .line {
+      opacity: 0;
+      transition: opacity 1s ease-in;
+    }
+
+    .line.show {
+      opacity: 1;
+    }
+
+    #personalLetter {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+#personalLetter.show {
+  opacity: 1;
+}
+
+#personalLetter.hide {
+  opacity: 0;
+}
+
+  </style>
+</head>
+<body>
+  <h1>Hi Love ❤️‍🔥</h1>
+  <p>Counting down until I get to hold you...</p>
+  <div class="heart">❤️</div>
+  <div id="countdown"></div>
+
+  <!-- Audio player (hidden) -->
+  <audio id="audioPlayer" src="dressed_up_in_white.mp3" preload="auto" loop></audio>
+
+
+  <button id="musicButton">🎵 Play Our Song</button>
+
+  <div id="finalMessage">We made it, love. I’m finally here with you. ❤️‍🔥</div>
+
+  <div id="personalLetter"></div>
+  <button id="replayButton" style="display:none;">🔁 Replay Letter</button>
+  
+
+  <script>
+    const targetDate = new Date("2026-06-12T17:00:00").getTime();
+    const countdownEl = document.getElementById("countdown");
+    const finalMessageEl = document.getElementById("finalMessage");
+
+    // Countdown timer
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        clearInterval(timer);
+        countdownEl.innerHTML = "";
+        document.querySelector(".heart").style.display = "none";
+        heartExplosion();
+        setTimeout(() => {
+          finalMessageEl.style.display = "block";
+          setTimeout(() => {
+            personalLetter.style.display = "block";
+            showLetterSequence();
+          }, 2000);
+        }, 2500);
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      countdownEl.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }, 1000);
+
+    // Heart explosion animation
+    function heartExplosion() {
+      for (let i = 0; i < 60; i++) {
+        const heart = document.createElement("div");
+        heart.className = "exploding-heart";
+        heart.innerHTML = "❤️";
+        heart.style.left = `${window.innerWidth / 2}px`;
+        heart.style.top = `${window.innerHeight / 2}px`;
+
+        const angle = Math.random() * 2 * Math.PI;
+        const distance = Math.random() * 300 + 100;
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+        heart.style.setProperty("--x", `${x}px`);
+        heart.style.setProperty("--y", `${y}px`);
+
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+          heart.remove();
+        }, 2000);
+      }
+    }
+
+    // Music toggle button
+    const audio = document.getElementById('audioPlayer');
+    const musicButton = document.getElementById('musicButton');
+    let playing = false;
+
+    musicButton.addEventListener('click', () => {
+  if (!playing) {
+    audio.play().catch(e => console.log("Play failed:", e));
+    musicButton.textContent = "⏸ Pause Song";
+    playing = true;
+  } else {
+    audio.pause();
+    musicButton.textContent = "🎵 Play Our Song";
+    playing = false;
+  }
+});
+
+audio.onended = () => {
+  playing = false;
+  musicButton.textContent = "🎵 Play Our Song";
+};
+
+audio.addEventListener('play', () => console.log('Audio started playing'));
+audio.addEventListener('pause', () => console.log('Audio paused'));
+audio.addEventListener('error', (e) => console.log('Audio error:', e));
+audio.addEventListener('ended', () => console.log('Audio ended'));
+
+const letterLines = [
+  "My love,",
+  "I’ve been waiting for this day longer than I can describe.",
+  "Every second the countdown ticked forward, I was thinking of you",
+  "Imagining your smile, your laugh, the way you make even the hardest days feel soft.",
+  "I made this little space just for us.",
+  "A place where I could count the moments until I see you again.",
+  "And now that we’re finally here… my heart feels like it could burst.",
+  "Like this moment has been written in the stars since the very first time we spoke.",
+  "I want you to know that no matter the distance, no matter the wait",
+  "I have loved you endlessly.",
+  "And I’ll keep loving you—in quiet moments, loud ones, silly ones, and soft ones.",
+  "Dressed in white or black or anything in between, I’m yours. Entirely.",
+  "Welcome to forever, love."
+];
+
+const personalLetter = document.getElementById("personalLetter");
+const replayButton = document.getElementById("replayButton");
+
+function showLetterSequence(index = 0) {
+  if (index >= letterLines.length) {
+    replayButton.style.display = "inline-block";
+    return;
+  }
+
+  personalLetter.textContent = letterLines[index];
+  personalLetter.classList.remove("hide");
+  personalLetter.classList.add("show");
+
+  setTimeout(() => {
+    personalLetter.classList.remove("show");
+    personalLetter.classList.add("hide");
+
+    setTimeout(() => {
+      showLetterSequence(index + 1);
+    }, 1000); // fade-out duration
+  }, 4500); // show each line for 4.5 seconds
+}
+
+// Start sequence initially
+// showLetterSequence();
+
+// Replay button restarts it
+replayButton.addEventListener("click", () => {
+  replayButton.style.display = "none";
+  showLetterSequence(0);
+});
+
+
+
+  </script>
+</body>
+</html>
