@@ -356,7 +356,7 @@ const centerY = rect.top + rect.height / 2;
 
 
 const hearts = [];
-const numHearts = 15;
+const numHearts = 40;
 
 for (let i = 0; i < numHearts; i++) {
   const heart = document.createElement('div');
@@ -365,8 +365,8 @@ for (let i = 0; i < numHearts; i++) {
   document.body.appendChild(heart);
 
   // Start somewhere *off screen* randomly
-  const startX = Math.random() < 0.5 ? -50 : window.innerWidth + 50;  // off left or right
-  const startY = Math.random() * window.innerHeight;
+  const startX = Math.random() < 0.2 ? -50 : window.innerWidth + 50;  // off left or right
+  const startY =  Math.random() < 0.2 ? -50 : window.innerWidth + 50;  // off left or right
 
   // Calculate angle from start position toward blackhole center
   const dx = centerX - startX;
@@ -386,17 +386,18 @@ for (let i = 0; i < numHearts; i++) {
 function animateHearts() {
   hearts.forEach(heart => {
     // Increase angle to make heart rotate around center
-    heart.angle += 0.02;  // Adjust speed of rotation here
+    const angleSpeed = 0.006 + (7 / (heart.distance + 5)); // increases near center
+    heart.angle += angleSpeed;
 
     // Move heart closer by reducing distance
-    const speed = 0.9 + (80 / (heart.distance + 1)); // speed increases as distance decreases
+    const speed = 0.7 + (80 / (heart.distance + 1)); // speed increases as distance decreases
     heart.distance -= speed;
 
 
     if (heart.distance <= 0) {
       // Reset heart to outer position with new angle and distance
       heart.angle = Math.random() * 2 * Math.PI;
-      heart.distance = 450 + Math.random() * 200;
+      heart.distance = 750 + Math.random() * 200;
       heart.element.style.opacity = '1';
     }
 
@@ -408,7 +409,7 @@ function animateHearts() {
     heart.element.style.top = `${y}px`;
 
     // Fade out near center
-    if (heart.distance < 10) {
+    if (heart.distance < 20) {
       heart.element.style.opacity = `${heart.distance / 80}`;
     }
   });
