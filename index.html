@@ -139,12 +139,73 @@
   opacity: 0;
 }
 
+#blackhole {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  margin-left: -200px;  /* half width */
+  margin-top: -200px;   /* half height */
+  border-radius: 50%;
+  background: radial-gradient(circle at center, #000000, #220000, #000000);
+  box-shadow:
+    0 0 30px 15px #220000,
+    inset 0 0 50px 20px #440000;
+  animation: swirl 20s linear infinite;
+  z-index: -1;
+  transform-origin: center center;
+}
+
+@keyframes swirl {
+  from {
+    transform: rotate(0deg) scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.05);
+    filter: brightness(1.2);
+  }
+  to {
+    transform: rotate(360deg) scale(1);
+    filter: brightness(1);
+  }
+}
+
+#blackhole::before {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: transparent;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.heart {
+  position: fixed;
+  font-size: 20px;
+  color: #ff4444;
+  user-select: none;
+  pointer-events: none;
+  text-shadow: 0 0 5px #ff6666;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+
   </style>
 </head>
 <body>
+
+  <div id="blackhole"></div>
+
   <h1>Hi Love ❤️‍🔥</h1>
   <p>Counting down until I get to hold you...</p>
-  <div class="heart">❤️</div>
+  <div class="heart"></div>
   <div id="countdown"></div>
 
   <!-- Audio player (hidden) -->
@@ -288,6 +349,73 @@ replayButton.addEventListener("click", () => {
   showLetterSequence(0);
 });
 
+const blackhole = document.getElementById('blackhole');
+const rect = blackhole.getBoundingClientRect();
+const centerX = rect.left + rect.width / 2;
+const centerY = rect.top + rect.height / 2;
+
+
+const hearts = [];
+const numHearts = 15;
+
+for (let i = 0; i < numHearts; i++) {
+  const heart = document.createElement('div');
+  heart.className = 'heart';
+  heart.textContent = '❤️';
+  document.body.appendChild(heart);
+
+  // Start somewhere *off screen* randomly
+  const startX = Math.random() < 0.5 ? -50 : window.innerWidth + 50;  // off left or right
+  const startY = Math.random() * window.innerHeight;
+
+  // Calculate angle from start position toward blackhole center
+  const dx = centerX - startX;
+  const dy = centerY - startY;
+  const angle = Math.atan2(dy, dx);
+
+  // Start with a large distance (distance from center)
+  const distance = Math.hypot(dx, dy);
+
+  heart.style.left = `${startX}px`;
+  heart.style.top = `${startY}px`;
+
+  hearts.push({ element: heart, angle, distance });
+}
+
+
+function animateHearts() {
+  hearts.forEach(heart => {
+    // Increase angle to make heart rotate around center
+    heart.angle += 0.02;  // Adjust speed of rotation here
+
+    // Move heart closer by reducing distance
+    const speed = 0.9 + (80 / (heart.distance + 1)); // speed increases as distance decreases
+    heart.distance -= speed;
+
+
+    if (heart.distance <= 0) {
+      // Reset heart to outer position with new angle and distance
+      heart.angle = Math.random() * 2 * Math.PI;
+      heart.distance = 450 + Math.random() * 200;
+      heart.element.style.opacity = '1';
+    }
+
+    // Calculate new position with updated angle and distance (spiral)
+    const x = centerX + Math.cos(heart.angle) * heart.distance;
+    const y = centerY + Math.sin(heart.angle) * heart.distance;
+
+    heart.element.style.left = `${x}px`;
+    heart.element.style.top = `${y}px`;
+
+    // Fade out near center
+    if (heart.distance < 10) {
+      heart.element.style.opacity = `${heart.distance / 80}`;
+    }
+  });
+
+  requestAnimationFrame(animateHearts);
+}
+animateHearts();
 
 
   </script>
