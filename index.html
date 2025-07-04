@@ -386,7 +386,7 @@ for (let i = 0; i < numHearts; i++) {
 function animateHearts() {
   hearts.forEach(heart => {
     // Increase angle to make heart rotate around center
-    const angleSpeed = 0.006 + (7 / (heart.distance + 5)); // increases near center
+    const angleSpeed = 0.002 + (5 / (heart.distance + 5)); // increases near center
     heart.angle += angleSpeed;
 
     // Move heart closer by reducing distance
